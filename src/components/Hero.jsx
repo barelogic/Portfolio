@@ -1,107 +1,127 @@
 import { motion } from 'framer-motion';
-import { FaArrowDown } from 'react-icons/fa';
+import { FaArrowDown, FaArrowRight } from 'react-icons/fa';
+import MagneticButton from './motion/MagneticButton';
+
+function MaskedLine({ children, delay }) {
+  return (
+    <span className="block overflow-hidden pb-[0.06em]">
+      <motion.span
+        className="block"
+        initial={{ y: '110%' }}
+        animate={{ y: 0 }}
+        transition={{ duration: 1, delay, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  );
+}
+
+function RotatingBadge() {
+  return (
+    <div className="relative h-28 w-28 shrink-0 md:h-36 md:w-36">
+      <svg viewBox="0 0 100 100" className="h-full w-full animate-spin-slow">
+        <defs>
+          <path id="badge-circle" d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" />
+        </defs>
+        <text className="fill-ink text-[10.5px] font-semibold uppercase" style={{ letterSpacing: '2.6px' }}>
+          <textPath href="#badge-circle">open to work • open to work •</textPath>
+        </text>
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-paper md:h-14 md:w-14">
+          <FaArrowDown />
+        </span>
+      </span>
+    </div>
+  );
+}
 
 const Hero = () => {
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
-    },
-  };
+  const go = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* Background Gradient Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary-900/20 via-dark-900 to-dark-900"></div>
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl"></div>
-
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto"
-      >
-        <motion.p
-          variants={itemVariants}
-          className="text-primary-400 text-lg md:text-xl mb-4"
-        >
-          Hi, I'm
-        </motion.p>
-
-        <motion.h1
-          variants={itemVariants}
-          className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4"
-        >
-          <span className="text-gradient">Venkatesh R</span>
-        </motion.h1>
-
-        <motion.h2
-          variants={itemVariants}
-          className="text-2xl md:text-3xl lg:text-4xl font-semibold text-slate-300 mb-6"
-        >
-          Full Stack Developer
-        </motion.h2>
-
-        <motion.p
-          variants={itemVariants}
-          className="text-lg md:text-xl text-slate-400 mb-12 max-w-2xl mx-auto"
-        >
-          Specializing in MERN Stack, Django & PostgreSQL
-          <br />
-          Building scalable web applications with modern technologies
-        </motion.p>
-
+    <section className="relative overflow-hidden pt-16 md:pt-20">
+      <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+        {/* kicker row */}
         <motion.div
-          variants={itemVariants}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+          className="flex flex-wrap items-center justify-between gap-2 border-b rule py-4"
         >
-          <button
-            onClick={() => scrollToSection('projects')}
-            className="btn-primary w-full sm:w-auto"
-          >
-            View My Work
-          </button>
-          <button
-            onClick={() => scrollToSection('contact')}
-            className="btn-outline w-full sm:w-auto"
-          >
-            Get In Touch
-          </button>
+          <span className="label-mono text-smoke">(Folio — 2026)</span>
+          <span className="label-mono hidden text-smoke sm:block">Based in India, working worldwide</span>
+          <span className="label-mono flex items-center gap-2">
+            <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-accent" />
+            Available for work
+          </span>
         </motion.div>
 
-        <motion.div
-          variants={itemVariants}
-          className="mt-16 md:mt-24"
-        >
-          <button
-            onClick={() => scrollToSection('about')}
-            className="text-primary-400 hover:text-primary-300 transition-colors animate-bounce"
+        {/* giant headline */}
+        <h1 className="display-giant mt-6 text-[17.5vw] sm:text-[15vw] lg:text-[11.5vw]">
+          <MaskedLine delay={0.3}>Full-Stack</MaskedLine>
+          <MaskedLine delay={0.42}>
+            <span className="text-outline">Developer</span>
+            <sup className="font-display text-[4vw] text-accent lg:text-[2.5vw]" style={{ WebkitTextStroke: '0' }}>®</sup>
+          </MaskedLine>
+        </h1>
+
+        {/* intro row */}
+        <div className="mt-8 flex flex-col gap-8 md:mt-12 md:flex-row md:items-end md:justify-between">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.65, duration: 0.7 }}
+            className="max-w-xl"
           >
-            <FaArrowDown size={24} />
-          </button>
+            <p className="text-lg leading-relaxed md:text-xl">
+              I&apos;m <strong>Venkatesh R</strong> — I build scalable web apps with{' '}
+              <strong>React, Django &amp; PostgreSQL</strong>, blending clean
+              engineering with bold, editorial interfaces.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-4">
+              <MagneticButton>
+                <button onClick={() => go('work')} className="btn-pill">
+                  View selected work <FaArrowRight className="-rotate-45 text-xs" />
+                </button>
+              </MagneticButton>
+              <MagneticButton>
+                <button onClick={() => go('contact')} className="btn-pill-outline">
+                  Get in touch
+                </button>
+              </MagneticButton>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+          >
+            <RotatingBadge />
+          </motion.div>
+        </div>
+
+        {/* meta strip */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          className="mt-10 grid grid-cols-2 border-t rule md:grid-cols-4"
+        >
+          {[
+            ['10+', 'Projects shipped'],
+            ['MERN · Django', 'Core stack'],
+            ['PostgreSQL', 'Data layer'],
+            ['Scroll ↓', 'See the work'],
+          ].map(([big, small]) => (
+            <div key={small} className="border-r rule px-4 py-5 first:pl-0 last:border-r-0">
+              <div className="font-display text-xl font-bold uppercase tracking-tight md:text-2xl">{big}</div>
+              <div className="label-mono mt-1 text-smoke">{small}</div>
+            </div>
+          ))}
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 };

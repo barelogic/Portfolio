@@ -1,64 +1,39 @@
 import { motion } from 'framer-motion';
-import { FaCalendar, FaClock, FaArrowRight } from 'react-icons/fa';
+import { FaArrowRight } from 'react-icons/fa';
 
 const BlogCard = ({ post, index }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
+    <motion.a
+      href={post.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
-      whileHover={{ y: -8 }}
-      className="card h-full flex flex-col"
+      transition={{ delay: index * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="group flex h-full flex-col border-t-2 border-ink pt-5"
     >
-      {/* Blog Title */}
-      <h3 className="text-xl md:text-2xl font-bold text-slate-100 mb-3 hover:text-primary-400 transition-colors">
+      <div className="label-mono flex items-center justify-between text-smoke">
+        <span>{new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+        <span>{post.readTime}</span>
+      </div>
+      <h3 className="display-lg mt-4 text-2xl normal-case leading-tight tracking-normal transition-colors group-hover:text-accent md:text-[1.7rem]">
         {post.title}
       </h3>
-
-      {/* Meta Information */}
-      <div className="flex items-center gap-4 text-sm text-slate-500 mb-4">
-        <div className="flex items-center gap-2">
-          <FaCalendar />
-          <span>{new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <FaClock />
-          <span>{post.readTime}</span>
-        </div>
-      </div>
-
-      {/* Excerpt */}
-      <p className="text-slate-400 mb-6 leading-relaxed flex-grow">
-        {post.excerpt}
-      </p>
-
-      {/* Tags */}
-      {post.tags && (
-        <div className="flex flex-wrap gap-2 mb-6">
-          {post.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-1 text-xs bg-primary-500/10 text-primary-400 rounded"
-            >
-              {tag}
+      <p className="mt-3 flex-grow leading-relaxed text-ink/70">{post.excerpt}</p>
+      <div className="mt-5 flex items-center justify-between">
+        <div className="flex flex-wrap gap-2">
+          {post.tags?.slice(0, 2).map((tag) => (
+            <span key={tag} className="label-mono text-smoke">
+              #{tag}
             </span>
           ))}
         </div>
-      )}
-
-      {/* Read More Link */}
-      <motion.a
-        whileHover={{ x: 5 }}
-        href={post.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 text-primary-400 hover:text-primary-300 font-semibold transition-colors mt-auto group"
-      >
-        Read More
-        <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
-      </motion.a>
-    </motion.div>
+        <span className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/25 transition-all duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-paper">
+          <FaArrowRight className="-rotate-45 text-sm" />
+        </span>
+      </div>
+    </motion.a>
   );
 };
 

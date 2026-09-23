@@ -1,100 +1,113 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaBars, FaTimes, FaArrowRight } from 'react-icons/fa';
+import { LocalTime } from './motion/Effects';
+
+const navItems = [
+  { name: 'Work', id: 'work' },
+  { name: 'About', id: 'about' },
+  { name: 'Stack', id: 'stack' },
+  { name: 'Journal', id: 'journal' },
+];
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
-    }
+  const go = (id) => {
+    setOpen(false);
+    setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }, open ? 350 : 0);
   };
 
-  const navItems = [
-    { name: 'About', id: 'about' },
-    { name: 'Skills', id: 'skills' },
-    { name: 'Projects', id: 'projects' },
-    { name: 'Blog', id: 'blog' },
-    { name: 'Contact', id: 'contact' },
-  ];
-
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-dark-900/95 backdrop-blur-md shadow-lg shadow-primary-500/5'
-          : 'bg-transparent'
-      }`}
-    >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="flex-shrink-0 cursor-pointer"
+    <>
+      <motion.header
+        initial={{ y: -80 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className={`fixed inset-x-0 top-0 z-[80] border-b transition-colors duration-300 ${
+          isScrolled ? 'border-ink/10 bg-paper/90 backdrop-blur-md' : 'border-transparent bg-transparent'
+        }`}
+      >
+        <nav className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 sm:px-8 md:h-20 lg:px-12">
+          <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="font-display text-lg font-black uppercase tracking-tight"
           >
-            <span className="text-2xl font-bold text-gradient">VR</span>
-          </motion.div>
+            Venkatesh R<sup className="text-accent">®</sup>
+          </button>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
+          <div className="hidden items-center gap-8 md:flex">
+            {navItems.map((item, i) => (
               <button
                 key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="text-slate-300 hover:text-primary-400 transition-colors duration-300 relative group"
+                onClick={() => go(item.id)}
+                className="link-underline label-mono text-ink/80 hover:text-ink"
               >
-                {item.name}
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-400 group-hover:w-full transition-all duration-300"></span>
+                <span className="mr-1 text-accent">0{i + 1}</span> {item.name}
               </button>
             ))}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-slate-300 hover:text-primary-400 transition-colors"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-          </button>
-        </div>
+          <div className="flex items-center gap-4">
+            <span className="label-mono hidden text-smoke lg:block">
+              <LocalTime />
+            </span>
+            <button onClick={() => go('contact')} className="btn-pill hidden !px-6 !py-2.5 sm:inline-flex">
+              Contact <FaArrowRight className="-rotate-45 text-xs" />
+            </button>
+            <button
+              className="text-2xl md:hidden"
+              onClick={() => setOpen(!open)}
+              aria-label="Toggle menu"
+            >
+              {open ? <FaTimes /> : <FaBars />}
+            </button>
+          </div>
+        </nav>
+      </motion.header>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
+      <AnimatePresence>
+        {open && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="md:hidden py-4 space-y-4"
+            initial={{ clipPath: 'inset(0 0 100% 0)' }}
+            animate={{ clipPath: 'inset(0 0 0% 0)' }}
+            exit={{ clipPath: 'inset(0 0 100% 0)' }}
+            transition={{ duration: 0.45, ease: [0.76, 0, 0.24, 1] }}
+            className="fixed inset-0 z-[75] flex flex-col justify-end bg-ink p-6 pb-10 text-paper"
           >
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => scrollToSection(item.id)}
-                className="block w-full text-left text-slate-300 hover:text-primary-400 transition-colors py-2"
-              >
-                {item.name}
-              </button>
-            ))}
+            <div className="flex flex-col">
+              {[...navItems, { name: 'Contact', id: 'contact' }].map((item, i) => (
+                <motion.button
+                  key={item.id}
+                  initial={{ y: 40, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.15 + i * 0.07 }}
+                  onClick={() => go(item.id)}
+                  className="group flex items-baseline gap-4 border-b border-paper/15 py-3 text-left"
+                >
+                  <span className="label-mono text-accent">0{i + 1}</span>
+                  <span className="display-lg text-5xl transition-colors group-hover:text-accent">
+                    {item.name}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
+            <p className="label-mono mt-8 text-paper/50">
+              <LocalTime />
+            </p>
           </motion.div>
         )}
-      </nav>
-    </motion.header>
+      </AnimatePresence>
+    </>
   );
 };
 

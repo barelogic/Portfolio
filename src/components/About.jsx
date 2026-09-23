@@ -1,122 +1,97 @@
-import { motion } from 'framer-motion';
-import { useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { FaGithub, FaLinkedin, FaInstagram } from 'react-icons/fa';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { FaGithub, FaLinkedin, FaInstagram, FaArrowRight } from 'react-icons/fa';
+import { Reveal } from './motion/Effects';
+
+const STATEMENT =
+  'I build responsive interfaces, robust APIs and optimised databases — turning complex problems into elegant, functional products.';
+
+function Word({ progress, range, children }) {
+  const opacity = useTransform(progress, range, [0.14, 1]);
+  return (
+    <motion.span style={{ opacity }} className="mr-[0.28em] inline-block">
+      {children}
+    </motion.span>
+  );
+}
+
+const CAPABILITIES = [
+  ['Responsive interfaces', 'React.js, Tailwind, motion design'],
+  ['RESTful APIs', 'Django, DRF, Node.js / Express'],
+  ['Data modelling', 'PostgreSQL, MongoDB, optimisation'],
+  ['Shipping & scale', 'Docker, cloud deploys, CI basics'],
+];
 
 const About = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
-
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
-    },
-  };
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start 0.85', 'start 0.3'],
+  });
+  const words = STATEMENT.split(' ');
 
   return (
-    <section id="about" className="section-container">
-      <motion.div
-        ref={ref}
-        variants={containerVariants}
-        initial="hidden"
-        animate={isInView ? 'visible' : 'hidden'}
-      >
-        <h2 className="section-title">About Me</h2>
-
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-dark-800 rounded-2xl p-8 md:p-12 border border-dark-700">
-            <p className="text-lg md:text-xl text-slate-300 leading-relaxed mb-6">
-              I'm a passionate Full Stack Developer with expertise in building
-              modern, scalable web applications. With a strong foundation in both
-              frontend and backend technologies, I create seamless user experiences
-              backed by robust server architectures.
-            </p>
-
-            <p className="text-lg text-slate-400 leading-relaxed mb-8">
-              My journey in software development has equipped me with a diverse skill
-              set spanning the MERN stack, Django framework, and PostgreSQL database
-              management. I thrive on solving complex problems and transforming ideas
-              into functional, elegant solutions.
-            </p>
-
-            <div className="space-y-4 mb-8">
-              <h3 className="text-xl font-semibold text-primary-400 mb-4">
-                What I Do:
-              </h3>
-              <ul className="space-y-3 text-slate-300">
-                <li className="flex items-start">
-                  <span className="text-primary-400 mr-3">▹</span>
-                  <span>
-                    Build responsive and interactive user interfaces with React.js
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary-400 mr-3">▹</span>
-                  <span>
-                    Develop RESTful APIs using Django and Node.js/Express
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary-400 mr-3">▹</span>
-                  <span>
-                    Design and optimize databases with PostgreSQL and MongoDB
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary-400 mr-3">▹</span>
-                  <span>
-                    Deploy and maintain applications using cloud platforms and Docker
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="border-t border-dark-700 pt-8">
-              <h3 className="text-xl font-semibold text-primary-400 mb-6 text-center">
-                Let's Connect
-              </h3>
-              <div className="flex justify-center items-center gap-6">
-                <motion.a
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  whileTap={{ scale: 0.9 }}
-                  href="https://github.com/barelogic"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-link"
-                  aria-label="GitHub"
-                >
-                  <FaGithub size={32} />
-                </motion.a>
-                <motion.a
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  whileTap={{ scale: 0.9 }}
-                  href="https://www.linkedin.com/in/venkatesh-rathinasabapathy-671491322/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-link"
-                  aria-label="LinkedIn"
-                >
-                  <FaLinkedin size={32} />
-                </motion.a>
-                <motion.a
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  whileTap={{ scale: 0.9 }}
-                  href="https://instagram.com/yourprofile"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-link"
-                  aria-label="Instagram"
-                >
-                  <FaInstagram size={32} />
-                </motion.a>
-              </div>
-            </div>
-          </div>
+    <section id="about" className="section-pad">
+      <Reveal>
+        <div className="flex items-center justify-between border-b rule pb-4">
+          <span className="label-mono text-smoke">(02) — About</span>
+          <span className="label-mono hidden text-smoke sm:block">Full-stack developer</span>
         </div>
-      </motion.div>
+      </Reveal>
+
+      <p ref={ref} className="display-lg mt-8 max-w-6xl text-3xl normal-case leading-[1.08] tracking-normal sm:text-5xl lg:text-6xl">
+        {words.map((word, i) => (
+          <Word
+            key={i}
+            progress={scrollYProgress}
+            range={[i / words.length, Math.min(1, (i + 1.5) / words.length)]}
+          >
+            {word}
+          </Word>
+        ))}
+      </p>
+
+      <div className="mt-14 grid gap-10 md:grid-cols-2">
+        <Reveal>
+          <p className="max-w-md leading-relaxed text-ink/80">
+            I&apos;m a full-stack developer working across the MERN stack, Django
+            and PostgreSQL — from pixel-faithful frontends to server
+            architectures that hold up in production. I thrive on owning a
+            feature end to end: data model, API, interface, deploy.
+          </p>
+          <div className="mt-8 flex gap-6">
+            {[
+              { Icon: FaGithub, href: 'https://github.com/barelogic', label: 'GitHub' },
+              { Icon: FaLinkedin, href: 'https://www.linkedin.com/in/venkatesh-rathinasabapathy-671491322/', label: 'LinkedIn' },
+              { Icon: FaInstagram, href: 'https://instagram.com/yourprofile', label: 'Instagram' },
+            ].map(({ href, label }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link-underline label-mono flex items-center gap-1.5"
+              >
+                {label} <FaArrowRight className="-rotate-45 text-[10px]" />
+              </a>
+            ))}
+          </div>
+        </Reveal>
+
+        <div>
+          {CAPABILITIES.map(([title, desc], i) => (
+            <Reveal key={title} delay={i * 0.06}>
+              <div className="flex items-baseline justify-between gap-4 border-t rule py-4 last:border-b">
+                <span className="font-display text-lg font-bold uppercase tracking-tight sm:text-xl">
+                  <span className="mr-3 text-accent">0{i + 1}</span>
+                  {title}
+                </span>
+                <span className="text-right text-sm text-smoke">{desc}</span>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
     </section>
   );
 };
