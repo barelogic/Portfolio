@@ -1,6 +1,9 @@
+import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { FaArrowDown, FaArrowRight } from 'react-icons/fa';
 import MagneticButton from './motion/MagneticButton';
+
+const PortraitScene = lazy(() => import('./three/PortraitScene'));
 
 function MaskedLine({ children, delay }) {
   return (
@@ -42,7 +45,16 @@ const Hero = () => {
 
   return (
     <section className="relative overflow-hidden pt-16 md:pt-20">
-      <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+      {/* 3D particle portrait — right side on desktop, faded backdrop on mobile */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 right-0 w-full opacity-40 sm:w-[72%] sm:opacity-70 lg:w-[54%] lg:opacity-100"
+      >
+        <Suspense fallback={null}>
+          <PortraitScene />
+        </Suspense>
+      </div>
+      <div className="relative z-10 mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
         {/* kicker row */}
         <motion.div
           initial={{ opacity: 0 }}
